@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copia somente manifestos para instalar dependências de forma cacheável
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --ignore-engines
 
 # Build da aplicação Next.js
 FROM node:22-alpine AS builder
