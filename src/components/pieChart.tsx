@@ -18,14 +18,41 @@ interface Props {
   data: DataItem[];
 }
 
-const COLORS = ["#2dc653", "#0088FE", "#ef271b"];
+const COLORS = ["#16a34a", "#6b7280", "#ef4444"];
+
+const RADIAN = Math.PI / 180;
+const renderLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}: any) => {
+  if (percent < 0.05) return null;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor="middle"
+      dominantBaseline="central"
+      className="text-xs font-bold"
+      fontSize={12}
+      fontWeight={700}
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
 
 export default function PizzaChart({ data }: Props) {
   return (
-    <div
-      style={{ width: "100%", height: 300 }}
-      className="border border-slate-400 rounded-xl my-2 px-2"
-    >
+    <div style={{ width: "100%", height: 280 }}>
       <ResponsiveContainer>
         <PieChart>
           <Pie
@@ -35,16 +62,29 @@ export default function PizzaChart({ data }: Props) {
             labelLine={false}
             outerRadius={100}
             dataKey="value"
-            label={({ name, percent }) =>
-              `${name} ${(percent * 100).toFixed(0)}%`
-            }
+            label={renderLabel}
+            strokeWidth={2}
+            stroke="#fff"
           >
             {data.map((_, index) => (
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend layout="vertical" align="right" verticalAlign="middle" />
+          <Tooltip
+            formatter={(value: number, name: string) => [value, name]}
+            contentStyle={{
+              borderRadius: "0.75rem",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+            }}
+          />
+          <Legend
+            layout="vertical"
+            align="right"
+            verticalAlign="middle"
+            iconType="circle"
+            iconSize={10}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
