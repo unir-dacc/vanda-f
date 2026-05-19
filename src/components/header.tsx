@@ -30,7 +30,7 @@ export default function Header() {
           >
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 group-hover:bg-white/30 transition-colors">
               <Image
-                src="/logo/vandaLogo.svg"
+                src={`${router.basePath}/logo/vandaLogo.svg`}
                 width={28}
                 height={28}
                 alt="VANDA Logo"

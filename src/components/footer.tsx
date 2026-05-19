@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Footer() {
+  const router = useRouter();
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -12,7 +14,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2">
               <Image
-                src="/logo/dacc-logo.png"
+                src={`${router.basePath}/logo/dacc-logo.png`}
                 alt="DACC"
                 width={32}
                 height={32}
@@ -34,7 +36,7 @@ export default function Footer() {
               className="flex items-center gap-2 group"
             >
               <Image
-                src="/logo/unir-logo.ico"
+                src={`${router.basePath}/logo/unir-logo.ico`}
                 width={24}
                 height={24}
                 alt="UNIR"
