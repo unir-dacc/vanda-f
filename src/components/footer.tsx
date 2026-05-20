@@ -64,7 +64,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-200 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-gray-400">
-            © 2024 VANDA — All rights reserved
+            © {new Date().getFullYear()} VANDA — All rights reserved
           </p>
           <a
             href="https://www.unir.br/homepage"
