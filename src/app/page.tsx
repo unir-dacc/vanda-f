@@ -6,10 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
+import getConfig from 'next/config';
 
 export default function Home() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { publicRuntimeConfig } = getConfig();
+  const basePath = publicRuntimeConfig.basePath || '';
 
   const handleSearch = () => {
     if (!query.trim()) return;
@@ -30,7 +33,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5">
                 <Image
-                  src={`${router.basePath}/logo/vandaLogo.svg`}
+                  src={`${basePath}/logo/vandaLogo.svg`}
                   width={28}
                   height={28}
                   alt="VANDA Logo"
@@ -78,7 +81,7 @@ export default function Home() {
             <div className="flex justify-center mb-6">
               <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
                 <Image
-                  src={`${router.basePath}/logo/vandaLogo.svg`}
+                  src={`${basePath}/logo/vandaLogo.svg`}
                   width={64}
                   height={64}
                   alt="VANDA Logo"
@@ -206,7 +209,7 @@ export default function Home() {
           </div>
           <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 flex items-center justify-center min-h-48">
             <Image
-              src={`${router.basePath}/logo/vandaLogo.svg`}
+              src={`${basePath}/logo/vandaLogo.svg`}
               width={120}
               height={120}
               alt="VANDA"
@@ -234,7 +237,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                 >
                   <Image
-                    src={`${router.basePath}/logo/NIH_Logo.png`}
+                    src={`${basePath}/logo/NIH_Logo.png`}
                     alt="NIH"
                     width={57}
                     height={36}
@@ -261,7 +264,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                 >
                   <Image
-                    src={`${router.basePath}/logo/GeneCards-logo.png`}
+                    src={`${basePath}/logo/GeneCards-logo.png`}
                     alt="GeneCards"
                     width={30}
                     height={31}

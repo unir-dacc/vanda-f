@@ -2,13 +2,16 @@
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Keep useRouter for navigation
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
+import getConfig from 'next/config';
 
 export default function Header() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { publicRuntimeConfig } = getConfig();
+  const basePath = publicRuntimeConfig.basePath || '';
 
   const handleSearch = () => {
     if (!query.trim()) return;
@@ -30,7 +33,7 @@ export default function Header() {
           >
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 group-hover:bg-white/30 transition-colors">
               <Image
-                src={`${router.basePath}/logo/vandaLogo.svg`}
+                src={`${basePath}/logo/vandaLogo.svg`}
                 width={28}
                 height={28}
                 alt="VANDA Logo"
