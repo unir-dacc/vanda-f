@@ -1,17 +1,15 @@
 "use client";
+import { BASE_PATH } from "@/constants";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // Keep useRouter for navigation
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
-import getConfig from 'next/config';
 
 export default function Header() {
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const { publicRuntimeConfig } = getConfig();
-  const basePath = publicRuntimeConfig.basePath || '';
 
   const handleSearch = () => {
     if (!query.trim()) return;
@@ -27,13 +25,10 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top bar */}
         <div className="flex items-center justify-between h-16">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 group"
-          >
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 group-hover:bg-white/30 transition-colors">
               <Image
-                src={`${basePath}/logo/vandaLogo.svg`}
+                src={`${BASE_PATH}/logo/vandaLogo.svg`}
                 width={28}
                 height={28}
                 alt="VANDA Logo"
