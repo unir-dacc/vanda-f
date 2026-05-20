@@ -1,10 +1,8 @@
 "use client";
 import Image from "next/image";
-import getConfig from 'next/config';
+import { BASE_PATH } from "@/constants";
 
 export default function Footer() {
-  const { publicRuntimeConfig } = getConfig();
-  const basePath = publicRuntimeConfig.basePath || '';
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -16,7 +14,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2">
               <Image
-                src={`${basePath}/logo/dacc-logo.png`}
+                src={`${BASE_PATH}/logo/dacc-logo.png`}
                 alt="DACC"
                 width={32}
                 height={32}
@@ -38,7 +36,7 @@ export default function Footer() {
               className="flex items-center gap-2 group"
             >
               <Image
-                src={`${basePath}/logo/unir-logo.ico`}
+                src={`${BASE_PATH}/logo/unir-logo.ico`}
                 width={24}
                 height={24}
                 alt="UNIR"
