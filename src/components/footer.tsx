@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import { BASE_PATH } from "@/constants";
 
 export default function Footer() {
   return (
@@ -14,7 +13,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2">
               <Image
-                src={`${BASE_PATH}/logo/dacc-logo.png`}
+                src="/logo/dacc-logo.png"
                 alt="DACC"
                 width={32}
                 height={32}
@@ -36,7 +35,7 @@ export default function Footer() {
               className="flex items-center gap-2 group"
             >
               <Image
-                src={`${BASE_PATH}/logo/unir-logo.ico`}
+                src="/logo/unir-logo.ico"
                 width={24}
                 height={24}
                 alt="UNIR"

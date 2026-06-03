@@ -1,6 +1,5 @@
 "use client";
 import Footer from "@/components/footer";
-import { BASE_PATH } from "@/constants";
 import { Search, Dna, FlaskConical, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,7 +30,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5">
                 <Image
-                  src={`${BASE_PATH}/logo/vandaLogo.svg`}
+                  src={"/logo/vandaLogo.svg"}
                   width={28}
                   height={28}
                   alt="VANDA Logo"
@@ -79,7 +78,7 @@ export default function Home() {
             <div className="flex justify-center mb-6">
               <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
                 <Image
-                  src={`${BASE_PATH}/logo/vandaLogo.svg`}
+                  src={"/logo/vandaLogo.svg"}
                   width={64}
                   height={64}
                   alt="VANDA Logo"
@@ -207,7 +206,7 @@ export default function Home() {
           </div>
           <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 flex items-center justify-center min-h-48">
             <Image
-              src={`${BASE_PATH}/logo/vandaLogo.svg`}
+              src={"/logo/vandaLogo.svg"}
               width={120}
               height={120}
               alt="VANDA"
@@ -235,7 +234,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                 >
                   <Image
-                    src={`${BASE_PATH}/logo/NIH_Logo.png`}
+                    src="/logo/NIH_Logo.png"
                     alt="NIH"
                     width={57}
                     height={36}
@@ -262,7 +261,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                 >
                   <Image
-                    src={`${BASE_PATH}/logo/GeneCards-logo.png`}
+                    src="/logo/GeneCards-logo.png"
                     alt="GeneCards"
                     width={30}
                     height={31}

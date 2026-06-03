@@ -1,5 +1,4 @@
 "use client";
-import { BASE_PATH } from "@/constants";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +27,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 group-hover:bg-white/30 transition-colors">
               <Image
-                src={`${BASE_PATH}/logo/vandaLogo.svg`}
+                src="/logo/vandaLogo.svg"
                 width={28}
                 height={28}
                 alt="VANDA Logo"
