@@ -106,16 +106,17 @@ export default function Home() {
 
 			{/* Top Diseases */}
 			<section className="container mx-auto px-4 py-10">
-				<h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+				<h2 className="text-lg font-semibold mb-6 flex items-center justify-center gap-2">
 					<HeartPulse className="h-5 w-5 text-red-500" />
 					{t("home.top_diseases")}
 				</h2>
-				<div className="flex gap-3 overflow-x-auto pb-2">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
 					{topDiseases.map(d => (
 						<Link key={d.name} href={`/disease/${encodeURIComponent(d.name)}`}>
-							<Card className="min-w-44 hover:shadow-md transition-shadow cursor-pointer">
-								<CardContent className="p-4">
-									<p className="font-medium text-sm">{d.name}</p>
+							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-red-100 hover:border-red-300">
+								<CardContent className="p-5 text-center">
+									<HeartPulse className="h-6 w-6 text-red-400 mx-auto mb-2" />
+									<p className="font-semibold text-sm mb-1">{d.name}</p>
 									<p className="text-xs text-muted-foreground">{d.count.toLocaleString()} {t("page.associations")}</p>
 								</CardContent>
 							</Card>
@@ -125,17 +126,18 @@ export default function Home() {
 			</section>
 
 			{/* Top Genes */}
-			<section className="container mx-auto px-4 py-6">
-				<h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+			<section className="container mx-auto px-4 py-8">
+				<h2 className="text-lg font-semibold mb-6 flex items-center justify-center gap-2">
 					<FlaskConical className="h-5 w-5 text-purple-600" />
 					{t("home.top_genes")}
 				</h2>
-				<div className="flex gap-3 overflow-x-auto pb-2">
+				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-4xl mx-auto">
 					{topGenes.map(g => (
 						<Link key={g.name} href={`/gene/${g.name}`}>
-							<Card className="min-w-36 hover:shadow-md transition-shadow cursor-pointer">
-								<CardContent className="p-4">
-									<p className="font-mono font-semibold text-sm">{g.name}</p>
+							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-purple-100 hover:border-purple-300">
+								<CardContent className="p-5 text-center">
+									<FlaskConical className="h-6 w-6 text-purple-400 mx-auto mb-2" />
+									<p className="font-mono font-bold text-base">{g.name}</p>
 									<p className="text-xs text-muted-foreground">{g.count} SNPs</p>
 								</CardContent>
 							</Card>
@@ -145,17 +147,18 @@ export default function Home() {
 			</section>
 
 			{/* Top Foods */}
-			<section className="container mx-auto px-4 py-6 pb-10">
-				<h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+			<section className="container mx-auto px-4 py-8 pb-12">
+				<h2 className="text-lg font-semibold mb-6 flex items-center justify-center gap-2">
 					<UtensilsCrossed className="h-5 w-5 text-green-600" />
 					{t("home.top_foods")}
 				</h2>
-				<div className="flex gap-3 overflow-x-auto pb-2">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
 					{topFoods.map(f => (
 						<Link key={f.name} href={`/food/${encodeURIComponent(f.name)}`}>
-							<Card className="min-w-44 hover:shadow-md transition-shadow cursor-pointer">
-								<CardContent className="p-4">
-									<p className="font-medium text-sm">{f.name}</p>
+							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-green-100 hover:border-green-300">
+								<CardContent className="p-5 text-center">
+									<UtensilsCrossed className="h-6 w-6 text-green-400 mx-auto mb-2" />
+									<p className="font-semibold text-sm mb-1">{f.name}</p>
 									<p className="text-xs text-muted-foreground">{f.count.toLocaleString()} gene links</p>
 								</CardContent>
 							</Card>
