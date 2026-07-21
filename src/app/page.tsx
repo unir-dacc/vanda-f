@@ -16,11 +16,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const topDiseases = [
-	{ name: "Type 2 Diabetes", count: 3524 },
-	{ name: "Obesity", count: 2650 },
-	{ name: "Coronary Artery Disease", count: 1140 },
-	{ name: "Breast Cancer", count: 926 },
-	{ name: "Hypertension", count: 915 },
+	{ name: "Type 2 Diabetes", count: 1458 },
+	{ name: "Coronary Artery Disease", count: 604 },
+	{ name: "Obesity", count: 452 },
+	{ name: "Hypertension", count: 270 },
+	{ name: "Colorectal Cancer", count: 258 },
 ];
 
 const topGenes = [
@@ -79,7 +79,7 @@ export default function Home() {
 				<div className="container mx-auto px-4 py-6">
 					<div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
 						<div><p className="text-xl font-bold text-green-700">261K+</p><p className="text-xs text-muted-foreground">SNPs</p></div>
-						<div><p className="text-xl font-bold text-green-700">64.9K</p><p className="text-xs text-muted-foreground">{t("page.associations")}</p></div>
+						<div><p className="text-xl font-bold text-green-700">15.8K</p><p className="text-xs text-muted-foreground">{t("page.associations")}</p></div>
 						<div><p className="text-xl font-bold text-green-700">6K+</p><p className="text-xs text-muted-foreground">{t("tab.articles")}</p></div>
 						<div><p className="text-xl font-bold text-green-700">3.3M</p><p className="text-xs text-muted-foreground">Food-Gene</p></div>
 						<div><p className="text-xl font-bold text-green-700">F1: 0.85</p><p className="text-xs text-muted-foreground">Model</p></div>
