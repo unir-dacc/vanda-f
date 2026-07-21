@@ -138,9 +138,8 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 					<button
 						onClick={() => {
 							const headers = [
-								"Disease", "Effect", "Gene", "SNP", "Confidence",
-								"Odds_Ratio", "Source", "PMID", "Article_Title",
-								"Food", "PubMed_URL"
+								"Disease", "Effect", "Gene", "SNP",
+								"Source", "PMID", "Article_Title", "PubMed_URL"
 							];
 							const csvRows = [headers.join(",")];
 							for (const r of filtered) {
@@ -149,12 +148,9 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 									r.direction ?? "",
 									r.gene_info ?? "",
 									r.snp_id ?? r.snp ?? "",
-									r.confidence?.toFixed(4) ?? "",
-									r.odds_ratio ?? "",
 									r.source === "gwas-catalog" ? "GWAS Catalog" : "Literature Analysis (AI)",
 									r.pmid ?? "",
 									`"${(r.title ?? "").replace(/"/g, '""')}"`,
-									`"${(r.food ?? "").replace(/"/g, '""')}"`,
 									r.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${r.pmid}` : "",
 								].join(","));
 							}
