@@ -5,9 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SourceBadge } from "@/components/evidence/source-badge";
-import { ConfidenceIndicator } from "@/components/evidence/confidence-indicator";
 import { DirectionBadge } from "@/components/evidence/direction-badge";
-import { OddsRatioDisplay } from "@/components/evidence/odds-ratio-display";
 import { ExternalLink, ChevronUp, ChevronDown, Search, FlaskConical, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
@@ -156,9 +154,6 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 									</TableHead>
 								)}
 								{showSnp && <TableHead>{t("th.snp")}</TableHead>}
-								<TableHead className="cursor-pointer select-none" onClick={() => toggleSort("confidence")}>
-									{t("th.reliability")} <SortIcon field="confidence" />
-								</TableHead>
 								<TableHead>{t("th.source")}</TableHead>
 								<TableHead>{t("th.article")}</TableHead>
 							</TableRow>
@@ -200,7 +195,6 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 												)}
 											</TableCell>
 										)}
-										<TableCell><ConfidenceIndicator value={row.confidence} /></TableCell>
 										<TableCell><SourceBadge source={row.source ?? null} /></TableCell>
 										<TableCell>
 											{row.pmid ? (

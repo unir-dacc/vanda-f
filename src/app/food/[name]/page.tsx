@@ -180,10 +180,11 @@ export default function FoodPage() {
 								<Card>
 									<CardHeader className="pb-2"><CardTitle className="text-sm">{t("th.effect")} Distribution</CardTitle></CardHeader>
 									<CardContent>
-										<ResponsiveContainer width="100%" height={250}>
+										<ResponsiveContainer width="100%" height={300}>
 											<PieChart>
-												<Pie data={pieData} cx="50%" cy="50%" outerRadius={90} dataKey="value"
-													label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+												<Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value"
+													label={({ name, percent }) => percent > 0.05 ? `${name} ${(percent * 100).toFixed(0)}%` : ""}
+													labelLine={false}>
 													{pieData.map((entry) => (
 														<Cell key={entry.name} fill={DIRECTION_COLORS[entry.name as keyof typeof DIRECTION_COLORS] ?? "#6b7280"} />
 													))}
