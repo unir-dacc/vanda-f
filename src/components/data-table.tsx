@@ -137,23 +137,32 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 
 					<button
 						onClick={() => {
-							const headers = ["Disease", "Effect", "Gene", "SNP", "Source", "PMID"];
+							const headers = [
+								"Disease", "Effect", "Gene", "SNP", "Confidence",
+								"Odds_Ratio", "Source", "PMID", "Article_Title",
+								"Food", "PubMed_URL"
+							];
 							const csvRows = [headers.join(",")];
 							for (const r of filtered) {
 								csvRows.push([
-									`"${r.disease}"`,
-									r.direction,
+									`"${(r.disease ?? "").replace(/"/g, '""')}"`,
+									r.direction ?? "",
 									r.gene_info ?? "",
 									r.snp_id ?? r.snp ?? "",
-									r.source === "gwas-catalog" ? "GWAS" : "Literature",
+									r.confidence?.toFixed(4) ?? "",
+									r.odds_ratio ?? "",
+									r.source === "gwas-catalog" ? "GWAS Catalog" : "Literature Analysis (AI)",
 									r.pmid ?? "",
+									`"${(r.title ?? "").replace(/"/g, '""')}"`,
+									`"${(r.food ?? "").replace(/"/g, '""')}"`,
+									r.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${r.pmid}` : "",
 								].join(","));
 							}
-							const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+							const blob = new Blob(["\uFEFF" + csvRows.join("\n")], { type: "text/csv;charset=utf-8" });
 							const url = URL.createObjectURL(blob);
 							const a = document.createElement("a");
 							a.href = url;
-							a.download = "vanda_associations.csv";
+							a.download = `vanda_${new Date().toISOString().slice(0,10)}.csv`;
 							a.click();
 							URL.revokeObjectURL(url);
 						}}
