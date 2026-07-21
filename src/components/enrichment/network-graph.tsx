@@ -84,8 +84,7 @@ export function NetworkGraph({ nodes, links, title, height = 400 }: NetworkGraph
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
+		const ctx = canvas.getContext("2d")!;
 
 		const w = canvas.width;
 		const h = canvas.height;
