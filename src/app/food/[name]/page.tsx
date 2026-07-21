@@ -2,41 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { apiClient } from "@/api/axios";
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
+import type { FoodAnalysisResponse } from "@/types/api";
 import AppHeader from "@/components/app-header";
 import Footer from "@/components/footer";
 import { EmptyState } from "@/components/empty-state";
 import { DataTable, type AssociationRow } from "@/components/data-table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UtensilsCrossed, Download, SearchX, Info, Dna, FlaskConical } from "lucide-react";
-
-interface GeneAssociation {
-	snp: string; disease: string; direction: string; confidence: number;
-	source: string; odds_ratio: number | null; pmid: number | null;
-	title: string | null; pred_id: number;
-}
-
-interface GeneBlock {
-	gene: string;
-	associations: GeneAssociation[];
-	foods_with_gene: { food: string }[];
-}
-
-interface FoodData {
-	food: string; total_genes_in_food: number; genes_with_associations: number;
-	totals: { total_snps: number; total_genes: number };
-	counts: Record<string, number>; genes: GeneBlock[];
-}
+import { UtensilsCrossed, Download, SearchX, Info, Dna, ShieldCheck, ShieldAlert } from "lucide-react";
 
 export default function FoodPage() {
 	const params = useParams();
 	const foodName = decodeURIComponent(params.name as string);
 	const { locale } = useI18n();
 
-	const [data, setData] = useState<FoodData | null>(null);
+	const [data, setData] = useState<FoodAnalysisResponse | null>(null);
 	const [description, setDescription] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
@@ -45,10 +27,10 @@ export default function FoodPage() {
 		if (!foodName) return;
 		setLoading(true); setError(false);
 		Promise.allSettled([
-			apiClient.get(`/food/${encodeURIComponent(foodName)}`),
+			api.foodAnalysis(foodName),
 			api.foodInfo(foodName),
 		]).then(([dataResult, infoResult]) => {
-			if (dataResult.status === "fulfilled") setData(dataResult.value.data);
+			if (dataResult.status === "fulfilled") setData(dataResult.value);
 			else setError(true);
 			if (infoResult.status === "fulfilled") setDescription(infoResult.value.description);
 			setLoading(false);
@@ -58,7 +40,7 @@ export default function FoodPage() {
 	if (loading) {
 		return (<><AppHeader /><main className="container mx-auto px-4 py-8 space-y-4">
 			<Skeleton className="h-8 w-64" /><Skeleton className="h-16 w-full" />
-			<Skeleton className="h-48 w-full" />
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[1,2,3,4].map(i => <Skeleton key={i} className="h-24" />)}</div>
 		</main></>);
 	}
 
@@ -73,21 +55,11 @@ export default function FoodPage() {
 
 	const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
-	// Flatten gene blocks into table rows
-	const allRows: AssociationRow[] = data.genes.flatMap(g =>
-		g.associations.map(a => ({
-			disease: a.disease,
-			direction: a.direction,
-			gene_info: g.gene,
-			snp: a.snp,
-			confidence: a.confidence,
-			source: a.source,
-			odds_ratio: a.odds_ratio,
-			pmid: a.pmid,
-			title: a.title,
-			pred_id: a.pred_id,
-		}))
-	);
+	const allRows: AssociationRow[] = [
+		...(data.details.harmful ?? []).map(d => ({ ...d, direction: "harmful" })),
+		...(data.details.beneficial ?? []).map(d => ({ ...d, direction: "beneficial" })),
+		...(data.details.neutral ?? []).map(d => ({ ...d, direction: "neutral" })),
+	];
 
 	return (
 		<>
@@ -102,8 +74,7 @@ export default function FoodPage() {
 						<div>
 							<h1 className="text-3xl font-bold capitalize">{foodName}</h1>
 							<p className="text-sm text-muted-foreground">
-								{data.genes_with_associations} {locale === "pt" ? "genes com associações" : "genes with associations"}
-								{" · "}{allRows.length} {locale === "pt" ? "associações" : "associations"}
+								{data.totalDetails.total_snps} SNPs · {data.totalDetails.total_genes} {locale === "pt" ? "genes" : "genes"} · {allRows.length} {locale === "pt" ? "associações" : "associations"}
 							</p>
 						</div>
 						<a href={`${API_URL}/download/food/${encodeURIComponent(foodName)}`}
@@ -122,6 +93,38 @@ export default function FoodPage() {
 					)}
 				</div>
 
+				{/* Summary cards */}
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+					<Card>
+						<CardContent className="pt-4 text-center">
+							<p className="text-2xl font-bold">{data.totalDetails.total_snps}</p>
+							<p className="text-xs text-muted-foreground">Total SNPs</p>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardContent className="pt-4 text-center">
+							<p className="text-2xl font-bold">{data.totalDetails.total_genes}</p>
+							<p className="text-xs text-muted-foreground">{locale === "pt" ? "Genes" : "Genes"}</p>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardContent className="pt-4 text-center">
+							<p className="text-2xl font-bold text-green-600">{data.counts.beneficial?.snps ?? 0}</p>
+							<p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+								<ShieldCheck className="h-3 w-3" /> {locale === "pt" ? "Protetor" : "Protective"}
+							</p>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardContent className="pt-4 text-center">
+							<p className="text-2xl font-bold text-red-600">{data.counts.harmful?.snps ?? 0}</p>
+							<p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+								<ShieldAlert className="h-3 w-3" /> {locale === "pt" ? "Risco" : "Risk"}
+							</p>
+						</CardContent>
+					</Card>
+				</div>
+
 				{/* Disclaimer */}
 				<Card className="bg-amber-50/50 border-amber-200 mb-6">
 					<CardContent className="p-4 flex gap-3">
@@ -136,8 +139,8 @@ export default function FoodPage() {
 							</p>
 							<p className="text-xs text-amber-800/70">
 								{locale === "pt"
-									? `${foodName} contém compostos metabolizados por ${data.total_genes_in_food} genes. Isso NÃO significa que consumir ${foodName} cause ou previna essas condições.`
-									: `${foodName} contains compounds metabolized by ${data.total_genes_in_food} genes. This does NOT mean consuming ${foodName} causes or prevents these conditions.`}
+									? `Isso NÃO significa que consumir ${foodName} cause ou previna essas condições.`
+									: `This does NOT mean consuming ${foodName} causes or prevents these conditions.`}
 							</p>
 						</div>
 					</CardContent>
@@ -145,13 +148,13 @@ export default function FoodPage() {
 
 				{/* Table */}
 				{allRows.length > 0 ? (
-					<DataTable data={allRows} />
+					<DataTable data={allRows} showFood={false} />
 				) : (
 					<EmptyState icon={Dna}
 						title={locale === "pt" ? "Sem associações" : "No associations"}
 						description={locale === "pt"
-							? "Nenhuma associação genética encontrada para este alimento."
-							: "No genetic associations found for this food."} />
+							? "Nenhuma associação genética encontrada."
+							: "No genetic associations found."} />
 				)}
 			</main>
 			<Footer />
