@@ -149,19 +149,36 @@ export default function FoodPage() {
 					)}
 				</div>
 
+				{/* Disclaimer */}
+				<Card className="bg-amber-50/50 border-amber-200 mb-6">
+					<CardContent className="p-4 flex gap-3">
+						<div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+							<span className="text-amber-700 text-lg">⚠</span>
+						</div>
+						<div>
+							<p className="text-sm font-medium text-amber-900 mb-1">
+								{locale === "pt"
+									? "As associações abaixo são entre GENES e doenças, não entre o alimento e doenças."
+									: "The associations below are between GENES and diseases, not between this food and diseases."
+								}
+							</p>
+							<p className="text-xs text-amber-800/70">
+								{locale === "pt"
+									? `${foodName} contém compostos metabolizados por ${data.total_genes_in_food} genes. Esses genes foram estudados na literatura científica e têm associações com condições de saúde. Isso NÃO significa que consumir ${foodName} cause ou previna essas condições.`
+									: `${foodName} contains compounds metabolized by ${data.total_genes_in_food} genes. These genes have been studied in scientific literature and have associations with health conditions. This does NOT mean consuming ${foodName} causes or prevents these conditions.`
+								}
+							</p>
+						</div>
+					</CardContent>
+				</Card>
+
 				{/* Gene blocks */}
 				{data.genes.length > 0 ? (
 					<div className="space-y-4">
 						<h2 className="text-lg font-semibold flex items-center gap-2">
 							<FlaskConical className="h-5 w-5 text-purple-600" />
-							{locale === "pt" ? "Genes e suas Associações" : "Genes and their Associations"}
+							{locale === "pt" ? "Genes e suas Associações na Literatura" : "Genes and their Literature Associations"}
 						</h2>
-						<p className="text-sm text-muted-foreground">
-							{locale === "pt"
-								? `Genes cujos compostos estão presentes em ${foodName}. Cada gene tem associações com doenças encontradas na literatura científica.`
-								: `Genes whose compounds are present in ${foodName}. Each gene has disease associations found in scientific literature.`
-							}
-						</p>
 
 						<Accordion type="multiple" className="space-y-3">
 							{data.genes.map((geneBlock) => (
@@ -178,39 +195,49 @@ export default function FoodPage() {
 											</span>
 										</div>
 									</AccordionTrigger>
-									<AccordionContent className="pb-4">
-										{/* Associations */}
-										<div className="space-y-2 mb-4">
-											{geneBlock.associations.map((assoc, i) => (
-												<div key={i} className="flex flex-wrap items-center gap-2 py-2 border-b last:border-b-0">
-													<Link href={`/disease/${encodeURIComponent(assoc.disease)}`} className="font-medium text-sm hover:underline">
-														{assoc.disease}
-													</Link>
-													<DirectionBadge direction={assoc.direction} />
-													<SourceBadge source={assoc.source} />
-													{assoc.odds_ratio && <OddsRatioDisplay value={assoc.odds_ratio} />}
-													<Link href={`/snp/${assoc.snp.toLowerCase()}`} className="font-mono text-xs text-blue-700 hover:underline">
-														{assoc.snp.toLowerCase()}
-													</Link>
+									<AccordionContent className="pb-4 space-y-3">
+										{/* Associations — article first, then result */}
+										{geneBlock.associations.map((assoc, i) => (
+											<Card key={i} className="bg-muted/20">
+												<CardContent className="p-3 space-y-2">
+													{/* Article source first */}
 													{assoc.pmid && (
 														<a href={`https://pubmed.ncbi.nlm.nih.gov/${assoc.pmid}`} target="_blank" rel="noopener noreferrer"
-															className="ml-auto text-xs text-blue-600 hover:underline flex items-center gap-1"
-															title={assoc.title ?? ""}>
-															<ExternalLink className="h-3 w-3" />
-															{locale === "pt" ? "Artigo" : "Article"}
+															className="text-sm text-blue-700 hover:underline flex items-start gap-1.5 leading-snug">
+															<ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+															{assoc.title
+																? (assoc.title.length > 120 ? assoc.title.slice(0, 120) + "..." : assoc.title)
+																: `PubMed: ${assoc.pmid}`
+															}
 														</a>
 													)}
-												</div>
-											))}
-										</div>
+													{/* Result */}
+													<div className="flex flex-wrap items-center gap-2">
+														<span className="text-xs text-muted-foreground">
+															{locale === "pt" ? "Resultado:" : "Finding:"}
+														</span>
+														<Link href={`/snp/${assoc.snp.toLowerCase()}`} className="font-mono text-xs text-blue-700 hover:underline">
+															{assoc.snp.toLowerCase()}
+														</Link>
+														<span className="text-xs text-muted-foreground">→</span>
+														<Link href={`/disease/${encodeURIComponent(assoc.disease)}`} className="font-medium text-sm hover:underline">
+															{assoc.disease}
+														</Link>
+														<DirectionBadge direction={assoc.direction} />
+														<SourceBadge source={assoc.source} />
+														{assoc.odds_ratio && <OddsRatioDisplay value={assoc.odds_ratio} />}
+													</div>
+												</CardContent>
+											</Card>
+										))}
 
 										{/* Other foods with this gene */}
 										{geneBlock.foods_with_gene.length > 0 && (
 											<div className="bg-muted/30 rounded-lg p-3">
 												<p className="text-xs font-medium text-muted-foreground mb-2">
 													{locale === "pt"
-														? `Outros alimentos com compostos do gene ${geneBlock.gene}:`
-														: `Other foods with ${geneBlock.gene} compounds:`
+														? `Este gene está presente em centenas de alimentos, incluindo:`
+														: `This gene is present in hundreds of foods, including:`
 													}
 												</p>
 												<div className="flex flex-wrap gap-1.5">
@@ -221,6 +248,9 @@ export default function FoodPage() {
 															</Badge>
 														</Link>
 													))}
+													<Badge variant="outline" className="text-xs text-muted-foreground">
+														{locale === "pt" ? "e outros..." : "and more..."}
+													</Badge>
 												</div>
 											</div>
 										)}
