@@ -8,11 +8,9 @@ import { useI18n } from "@/lib/i18n";
 import AppHeader from "@/components/app-header";
 import Footer from "@/components/footer";
 import { EmptyState } from "@/components/empty-state";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SourceBadge } from "@/components/evidence/source-badge";
 import { DirectionBadge } from "@/components/evidence/direction-badge";
 import { OddsRatioDisplay } from "@/components/evidence/odds-ratio-display";
@@ -20,23 +18,12 @@ import { UtensilsCrossed, FlaskConical, ExternalLink, Download, SearchX, Info, D
 import Link from "next/link";
 
 interface GeneAssociation {
-	snp: string;
-	disease: string;
-	direction: string;
-	confidence: number;
-	source: string;
-	odds_ratio: number | null;
-	pmid: number | null;
-	title: string | null;
-	pred_id: number;
+	snp: string; disease: string; direction: string; confidence: number;
+	source: string; odds_ratio: number | null; pmid: number | null;
+	title: string | null; pred_id: number;
 }
 
-interface GeneFood {
-	food: string;
-	amount: number;
-	unit: string;
-	rank: number;
-}
+interface GeneFood { food: string; amount: number; unit: string; rank: number; }
 
 interface GeneBlock {
 	gene: string;
@@ -45,12 +32,9 @@ interface GeneBlock {
 }
 
 interface FoodData {
-	food: string;
-	total_genes_in_food: number;
-	genes_with_associations: number;
+	food: string; total_genes_in_food: number; genes_with_associations: number;
 	totals: { total_snps: number; total_genes: number };
-	counts: Record<string, number>;
-	genes: GeneBlock[];
+	counts: Record<string, number>; genes: GeneBlock[];
 }
 
 export default function FoodPage() {
@@ -65,9 +49,7 @@ export default function FoodPage() {
 
 	useEffect(() => {
 		if (!foodName) return;
-		setLoading(true);
-		setError(false);
-
+		setLoading(true); setError(false);
 		Promise.allSettled([
 			apiClient.get(`/food/${encodeURIComponent(foodName)}`),
 			api.foodInfo(foodName),
@@ -80,34 +62,19 @@ export default function FoodPage() {
 	}, [foodName]);
 
 	if (loading) {
-		return (
-			<>
-				<AppHeader />
-				<main className="container mx-auto px-4 py-8 space-y-4">
-					<Skeleton className="h-8 w-64" />
-					<Skeleton className="h-16 w-full" />
-					<Skeleton className="h-48 w-full" />
-				</main>
-			</>
-		);
+		return (<><AppHeader /><main className="container mx-auto px-4 py-8 space-y-4">
+			<Skeleton className="h-8 w-64" /><Skeleton className="h-16 w-full" />
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">{[1,2,3,4].map(i => <Skeleton key={i} className="h-48" />)}</div>
+		</main></>);
 	}
 
 	if (error || !data) {
-		return (
-			<>
-				<AppHeader />
-				<main className="container mx-auto px-4 py-16">
-					<EmptyState
-						icon={SearchX}
-						title={locale === "pt" ? "Sem dados" : "No data available"}
-						description={`${locale === "pt" ? "Nenhum dado nutrigenético encontrado para" : "No nutrigenetic data found for"} "${foodName}".`}
-						linkText="← Back"
-						linkHref="/"
-					/>
-				</main>
-				<Footer />
-			</>
-		);
+		return (<><AppHeader /><main className="container mx-auto px-4 py-16">
+			<EmptyState icon={SearchX}
+				title={locale === "pt" ? "Sem dados" : "No data available"}
+				description={`${locale === "pt" ? "Nenhum dado encontrado para" : "No data found for"} "${foodName}".`}
+				linkText="← Back" linkHref="/" />
+		</main><Footer /></>);
 	}
 
 	const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
@@ -115,7 +82,7 @@ export default function FoodPage() {
 	return (
 		<>
 			<AppHeader />
-			<main className="container mx-auto px-4 py-8 max-w-5xl">
+			<main className="container mx-auto px-4 py-8 max-w-6xl">
 				{/* Header */}
 				<div className="space-y-3 mb-6">
 					<div className="flex items-center gap-3">
@@ -126,16 +93,11 @@ export default function FoodPage() {
 							<h1 className="text-3xl font-bold capitalize">{foodName}</h1>
 							<p className="text-sm text-muted-foreground">
 								{data.genes_with_associations} {locale === "pt" ? "genes com associações" : "genes with associations"}
-								{" · "}
-								{data.total_genes_in_food} {locale === "pt" ? "genes totais" : "total genes"}
 							</p>
 						</div>
-						<a
-							href={`${API_URL}/download/food/${encodeURIComponent(foodName)}`}
-							className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg hover:bg-muted transition-colors"
-						>
-							<Download className="h-4 w-4" />
-							CSV
+						<a href={`${API_URL}/download/food/${encodeURIComponent(foodName)}`}
+							className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg hover:bg-muted transition-colors">
+							<Download className="h-4 w-4" /> CSV
 						</a>
 					</div>
 
@@ -150,7 +112,7 @@ export default function FoodPage() {
 				</div>
 
 				{/* Disclaimer */}
-				<Card className="bg-amber-50/50 border-amber-200 mb-6">
+				<Card className="bg-amber-50/50 border-amber-200 mb-8">
 					<CardContent className="p-4 flex gap-3">
 						<div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
 							<span className="text-amber-700 text-lg">⚠</span>
@@ -159,115 +121,114 @@ export default function FoodPage() {
 							<p className="text-sm font-medium text-amber-900 mb-1">
 								{locale === "pt"
 									? "As associações abaixo são entre GENES e doenças, não entre o alimento e doenças."
-									: "The associations below are between GENES and diseases, not between this food and diseases."
-								}
+									: "The associations below are between GENES and diseases, not between this food and diseases."}
 							</p>
 							<p className="text-xs text-amber-800/70">
 								{locale === "pt"
-									? `${foodName} contém compostos metabolizados por ${data.total_genes_in_food} genes. Esses genes foram estudados na literatura científica e têm associações com condições de saúde. Isso NÃO significa que consumir ${foodName} cause ou previna essas condições.`
-									: `${foodName} contains compounds metabolized by ${data.total_genes_in_food} genes. These genes have been studied in scientific literature and have associations with health conditions. This does NOT mean consuming ${foodName} causes or prevents these conditions.`
-								}
+									? `${foodName} contém compostos metabolizados por ${data.total_genes_in_food} genes. Isso NÃO significa que consumir ${foodName} cause ou previna essas condições.`
+									: `${foodName} contains compounds metabolized by ${data.total_genes_in_food} genes. This does NOT mean consuming ${foodName} causes or prevents these conditions.`}
 							</p>
 						</div>
 					</CardContent>
 				</Card>
 
-				{/* Gene blocks */}
+				{/* Gene cards grid */}
 				{data.genes.length > 0 ? (
-					<div className="space-y-4">
-						<h2 className="text-lg font-semibold flex items-center gap-2">
+					<>
+						<h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
 							<FlaskConical className="h-5 w-5 text-purple-600" />
 							{locale === "pt" ? "Genes e suas Associações na Literatura" : "Genes and their Literature Associations"}
 						</h2>
 
-						<Accordion type="multiple" className="space-y-3">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							{data.genes.map((geneBlock) => (
-								<AccordionItem key={geneBlock.gene} value={geneBlock.gene} className="border rounded-lg px-4">
-									<AccordionTrigger className="hover:no-underline py-4">
-										<div className="flex items-center gap-3 text-left">
-											<Link href={`/gene/${geneBlock.gene}`} onClick={e => e.stopPropagation()}>
-												<Badge variant="outline" className="font-mono text-sm hover:bg-muted px-3 py-1">
-													<FlaskConical className="h-3 w-3 mr-1" />{geneBlock.gene}
+								<Card key={geneBlock.gene} className="hover:shadow-md transition-shadow">
+									<CardContent className="p-5 space-y-3">
+										{/* Gene header */}
+										<div className="flex items-center justify-between">
+											<Link href={`/gene/${geneBlock.gene}`}>
+												<Badge variant="outline" className="font-mono text-sm hover:bg-muted px-3 py-1.5">
+													<FlaskConical className="h-3.5 w-3.5 mr-1.5" />{geneBlock.gene}
 												</Badge>
 											</Link>
-											<span className="text-sm text-muted-foreground">
+											<span className="text-xs text-muted-foreground">
 												{geneBlock.associations.length} {locale === "pt" ? "associações" : "associations"}
 											</span>
 										</div>
-									</AccordionTrigger>
-									<AccordionContent className="pb-4 space-y-3">
-										{/* Associations — article first, then result */}
-										{geneBlock.associations.map((assoc, i) => (
-											<Card key={i} className="bg-muted/20">
-												<CardContent className="p-3 space-y-2">
-													{/* Article source first */}
-													{assoc.pmid && (
+
+										{/* Associations */}
+										<div className="space-y-2">
+											{geneBlock.associations.map((assoc, i) => (
+												<div key={i} className="rounded-lg bg-muted/30 p-3 space-y-1.5">
+													{/* Article */}
+													{assoc.pmid ? (
 														<a href={`https://pubmed.ncbi.nlm.nih.gov/${assoc.pmid}`} target="_blank" rel="noopener noreferrer"
-															className="text-sm text-blue-700 hover:underline flex items-start gap-1.5 leading-snug">
-															<ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-															{assoc.title
-																? (assoc.title.length > 120 ? assoc.title.slice(0, 120) + "..." : assoc.title)
-																: `PubMed: ${assoc.pmid}`
-															}
+															className="text-xs text-blue-700 hover:underline flex items-start gap-1 leading-snug">
+															<ExternalLink className="h-3 w-3 shrink-0 mt-0.5" />
+															<span className="line-clamp-2">{assoc.title || `PMID: ${assoc.pmid}`}</span>
 														</a>
-													)}
-													{/* Result */}
-													<div className="flex flex-wrap items-center gap-2">
-														<span className="text-xs text-muted-foreground">
-															{locale === "pt" ? "Resultado:" : "Finding:"}
+													) : (
+														<span className="text-xs text-muted-foreground italic">
+															{locale === "pt" ? "Artigo não disponível" : "Article not available"}
 														</span>
+													)}
+
+													{/* Finding */}
+													<div className="flex flex-wrap items-center gap-1.5">
 														<Link href={`/snp/${assoc.snp.toLowerCase()}`} className="font-mono text-xs text-blue-700 hover:underline">
 															{assoc.snp.toLowerCase()}
 														</Link>
-														<span className="text-xs text-muted-foreground">→</span>
-														<Link href={`/disease/${encodeURIComponent(assoc.disease)}`} className="font-medium text-sm hover:underline">
+														<span className="text-muted-foreground text-xs">→</span>
+														<Link href={`/disease/${encodeURIComponent(assoc.disease)}`} className="text-sm font-medium hover:underline">
 															{assoc.disease}
 														</Link>
 														<DirectionBadge direction={assoc.direction} />
+													</div>
+
+													{/* Source */}
+													<div className="flex flex-wrap items-center gap-1.5">
 														<SourceBadge source={assoc.source} />
 														{assoc.odds_ratio && <OddsRatioDisplay value={assoc.odds_ratio} />}
 													</div>
-												</CardContent>
-											</Card>
-										))}
+												</div>
+											))}
+										</div>
 
-										{/* Other foods with this gene */}
+										{/* Other foods */}
 										{geneBlock.foods_with_gene.length > 0 && (
-											<div className="bg-muted/30 rounded-lg p-3">
-												<p className="text-xs font-medium text-muted-foreground mb-2">
+											<div className="pt-2 border-t">
+												<p className="text-[11px] text-muted-foreground mb-1.5">
 													{locale === "pt"
-														? `Este gene está presente em centenas de alimentos, incluindo:`
-														: `This gene is present in hundreds of foods, including:`
-													}
+														? "Este gene está presente em centenas de alimentos:"
+														: "This gene is present in hundreds of foods:"}
 												</p>
-												<div className="flex flex-wrap gap-1.5">
-													{geneBlock.foods_with_gene.map((f, i) => (
+												<div className="flex flex-wrap gap-1">
+													{geneBlock.foods_with_gene.slice(0, 5).map((f, i) => (
 														<Link key={i} href={`/food/${encodeURIComponent(f.food)}`}>
-															<Badge variant="outline" className="text-xs hover:bg-muted cursor-pointer">
+															<Badge variant="outline" className="text-[10px] hover:bg-muted cursor-pointer py-0">
 																{f.food}
 															</Badge>
 														</Link>
 													))}
-													<Badge variant="outline" className="text-xs text-muted-foreground">
-														{locale === "pt" ? "e outros..." : "and more..."}
-													</Badge>
+													{geneBlock.foods_with_gene.length > 5 && (
+														<Badge variant="outline" className="text-[10px] text-muted-foreground py-0">
+															+{geneBlock.foods_with_gene.length - 5}
+														</Badge>
+													)}
 												</div>
 											</div>
 										)}
-									</AccordionContent>
-								</AccordionItem>
+									</CardContent>
+								</Card>
 							))}
-						</Accordion>
-					</div>
+						</div>
+					</>
 				) : (
-					<EmptyState
-						icon={Dna}
+					<EmptyState icon={Dna}
 						title={locale === "pt" ? "Sem associações" : "No associations"}
 						description={locale === "pt"
 							? "Nenhuma associação genética encontrada para este alimento."
-							: "No genetic associations found for this food."
-						}
-					/>
+							: "No genetic associations found for this food."} />
 				)}
 			</main>
 			<Footer />
