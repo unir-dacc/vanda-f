@@ -54,4 +54,31 @@ export const api = {
 
 	pmidChain: (pmid: string) =>
 		get<PMIDChainResponse>(`/evidence/pmid/${encodeURIComponent(pmid)}`),
+
+	// Info (MeSH descriptions)
+	foodInfo: (name: string) =>
+		get<{ name: string; description: string | null; source: string | null }>(
+			`/info/food/${encodeURIComponent(name)}`
+		),
+
+	diseaseInfo: (name: string) =>
+		get<{ name: string; description: string | null; source: string | null }>(
+			`/info/disease/${encodeURIComponent(name)}`
+		),
+
+	// Disease
+	diseaseAnalysis: (name: string) =>
+		get<{
+			disease: string;
+			total_predictions: number;
+			counts: Record<string, number>;
+			predictions: Array<{
+				pred_id: number; snp: string; direction: string;
+				confidence: number; source: string;
+				odds_ratio: number | null; p_value: number | null;
+				pmid: number | null; title: string | null;
+			}>;
+			genes: Array<{ gene: string; snp_count: number }>;
+			foods: Array<{ food: string; gene: string; amount: number; unit: string }>;
+		}>(`/disease/${encodeURIComponent(name)}`),
 };
