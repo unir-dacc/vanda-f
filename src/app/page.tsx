@@ -1,47 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Footer from "@/components/footer";
 import AppHeader from "@/components/app-header";
 import { UnifiedSearch } from "@/components/search/unified-search";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n";
+import { apiClient } from "@/api/axios";
 import {
 	Dna, FlaskConical, UtensilsCrossed, HeartPulse, BookOpen, ExternalLink,
 	Database, Brain, Search, Activity, Globe, FileText, BarChart3,
-	ShieldCheck, ArrowRight, GitBranch, Info,
+	ShieldCheck, GitBranch, Info,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const topDiseases = [
-	{ name: "Type 2 Diabetes", count: 1458 },
-	{ name: "Coronary Artery Disease", count: 604 },
-	{ name: "Obesity", count: 452 },
-	{ name: "Hypertension", count: 270 },
-	{ name: "Colorectal Cancer", count: 258 },
-];
+interface StatsData {
+	snps: number;
+	articles: number;
+	foods: number;
+	predictions: number;
+	top_diseases: { name: string; count: number }[];
+	top_genes: { name: string; count: number }[];
+	top_foods: { name: string; count: number }[];
+}
 
-const topGenes = [
-	{ name: "VDR", count: 44 },
-	{ name: "FTO", count: 38 },
-	{ name: "FADS2", count: 28 },
-	{ name: "CYP24A1", count: 27 },
-	{ name: "PPARG", count: 21 },
-	{ name: "TCF7L2", count: 18 },
-];
-
-const topFoods = [
-	{ name: "Milk (Cow)", count: 5549 },
-	{ name: "Beer", count: 5128 },
-	{ name: "Corn", count: 4664 },
-	{ name: "Carrot", count: 4604 },
-	{ name: "Apple", count: 4562 },
-];
+function formatNumber(n: number): string {
+	if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+	if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+	return n.toString();
+}
 
 export default function Home() {
 	const { t } = useI18n();
+	const [stats, setStats] = useState<StatsData | null>(null);
+
+	useEffect(() => {
+		apiClient.get("/stats").then(res => setStats(res.data)).catch(() => {});
+	}, []);
 
 	return (
 		<div className="min-h-screen flex flex-col">
@@ -61,15 +59,27 @@ export default function Home() {
 
 					<div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-sm">
 						<span className="text-muted-foreground">{t("home.try")}</span>
-						<Link href="/gene/MTHFR" className="text-purple-600 hover:underline font-semibold">MTHFR</Link>
-						<span className="text-muted-foreground">·</span>
-						<Link href="/food/Milk (Cow)" className="text-green-600 hover:underline">Milk</Link>
-						<span className="text-muted-foreground">·</span>
-						<Link href="/disease/Obesity" className="text-red-500 hover:underline">Obesity</Link>
-						<span className="text-muted-foreground">·</span>
-						<Link href="/disease/Type 2 Diabetes" className="text-red-500 hover:underline">Type 2 Diabetes</Link>
-						<span className="text-muted-foreground">·</span>
-						<Link href="/gene/FTO" className="text-purple-600 hover:underline font-semibold">FTO</Link>
+						{stats?.top_genes?.[0] && (
+							<Link href={`/gene/${stats.top_genes[0].name}`} className="text-purple-600 hover:underline font-semibold">{stats.top_genes[0].name}</Link>
+						)}
+						{stats?.top_diseases?.[0] && (
+							<>
+								<span className="text-muted-foreground">·</span>
+								<Link href={`/disease/${encodeURIComponent(stats.top_diseases[0].name)}`} className="text-red-500 hover:underline">{stats.top_diseases[0].name}</Link>
+							</>
+						)}
+						{stats?.top_foods?.[0] && (
+							<>
+								<span className="text-muted-foreground">·</span>
+								<Link href={`/food/${encodeURIComponent(stats.top_foods[0].name)}`} className="text-green-600 hover:underline">{stats.top_foods[0].name}</Link>
+							</>
+						)}
+						{stats?.top_genes?.[1] && (
+							<>
+								<span className="text-muted-foreground">·</span>
+								<Link href={`/gene/${stats.top_genes[1].name}`} className="text-purple-600 hover:underline font-semibold">{stats.top_genes[1].name}</Link>
+							</>
+						)}
 					</div>
 				</div>
 			</section>
@@ -77,13 +87,19 @@ export default function Home() {
 			{/* Stats */}
 			<section className="border-b bg-white">
 				<div className="container mx-auto px-4 py-6">
-					<div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-						<div><p className="text-xl font-bold text-green-700">261K+</p><p className="text-xs text-muted-foreground">SNPs</p></div>
-						<div><p className="text-xl font-bold text-green-700">15.8K</p><p className="text-xs text-muted-foreground">{t("page.associations")}</p></div>
-						<div><p className="text-xl font-bold text-green-700">6K+</p><p className="text-xs text-muted-foreground">{t("tab.articles")}</p></div>
-						<div><p className="text-xl font-bold text-green-700">3.3M</p><p className="text-xs text-muted-foreground">Food-Gene</p></div>
-						<div><p className="text-xl font-bold text-green-700">F1: 0.85</p><p className="text-xs text-muted-foreground">Model</p></div>
-					</div>
+					{stats ? (
+						<div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.snps)}</p><p className="text-xs text-muted-foreground">SNPs</p></div>
+							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.predictions)}</p><p className="text-xs text-muted-foreground">{t("page.associations")}</p></div>
+							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.articles)}</p><p className="text-xs text-muted-foreground">{t("tab.articles")}</p></div>
+							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.foods)}</p><p className="text-xs text-muted-foreground">Food-Gene</p></div>
+							<div><p className="text-xl font-bold text-green-700">F1: 0.85</p><p className="text-xs text-muted-foreground">Model</p></div>
+						</div>
+					) : (
+						<div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+							{[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-12" />)}
+						</div>
+					)}
 				</div>
 			</section>
 
@@ -110,19 +126,25 @@ export default function Home() {
 					<HeartPulse className="h-5 w-5 text-red-500" />
 					{t("home.top_diseases")}
 				</h2>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
-					{topDiseases.map(d => (
-						<Link key={d.name} href={`/disease/${encodeURIComponent(d.name)}`}>
-							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-red-100 hover:border-red-300">
-								<CardContent className="p-5 text-center">
-									<HeartPulse className="h-6 w-6 text-red-400 mx-auto mb-2" />
-									<p className="font-semibold text-sm mb-1">{d.name}</p>
-									<p className="text-xs text-muted-foreground">{d.count.toLocaleString()} {t("page.associations")}</p>
-								</CardContent>
-							</Card>
-						</Link>
-					))}
-				</div>
+				{stats?.top_diseases ? (
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
+						{stats.top_diseases.slice(0, 5).map(d => (
+							<Link key={d.name} href={`/disease/${encodeURIComponent(d.name)}`}>
+								<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-red-100 hover:border-red-300">
+									<CardContent className="p-5 text-center">
+										<HeartPulse className="h-6 w-6 text-red-400 mx-auto mb-2" />
+										<p className="font-semibold text-sm mb-1">{d.name}</p>
+										<p className="text-xs text-muted-foreground">{d.count.toLocaleString()} {t("page.associations")}</p>
+									</CardContent>
+								</Card>
+							</Link>
+						))}
+					</div>
+				) : (
+					<div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
+						{[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-28" />)}
+					</div>
+				)}
 			</section>
 
 			{/* Top Genes */}
@@ -131,19 +153,25 @@ export default function Home() {
 					<FlaskConical className="h-5 w-5 text-purple-600" />
 					{t("home.top_genes")}
 				</h2>
-				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-4xl mx-auto">
-					{topGenes.map(g => (
-						<Link key={g.name} href={`/gene/${g.name}`}>
-							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-purple-100 hover:border-purple-300">
-								<CardContent className="p-5 text-center">
-									<FlaskConical className="h-6 w-6 text-purple-400 mx-auto mb-2" />
-									<p className="font-mono font-bold text-base">{g.name}</p>
-									<p className="text-xs text-muted-foreground">{g.count} SNPs</p>
-								</CardContent>
-							</Card>
-						</Link>
-					))}
-				</div>
+				{stats?.top_genes ? (
+					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-4xl mx-auto">
+						{stats.top_genes.map(g => (
+							<Link key={g.name} href={`/gene/${g.name}`}>
+								<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-purple-100 hover:border-purple-300">
+									<CardContent className="p-5 text-center">
+										<FlaskConical className="h-6 w-6 text-purple-400 mx-auto mb-2" />
+										<p className="font-mono font-bold text-base">{g.name}</p>
+										<p className="text-xs text-muted-foreground">{g.count} SNPs</p>
+									</CardContent>
+								</Card>
+							</Link>
+						))}
+					</div>
+				) : (
+					<div className="grid grid-cols-3 md:grid-cols-6 gap-4 max-w-4xl mx-auto">
+						{[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-28" />)}
+					</div>
+				)}
 			</section>
 
 			{/* Top Foods */}
@@ -152,19 +180,25 @@ export default function Home() {
 					<UtensilsCrossed className="h-5 w-5 text-green-600" />
 					{t("home.top_foods")}
 				</h2>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
-					{topFoods.map(f => (
-						<Link key={f.name} href={`/food/${encodeURIComponent(f.name)}`}>
-							<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-green-100 hover:border-green-300">
-								<CardContent className="p-5 text-center">
-									<UtensilsCrossed className="h-6 w-6 text-green-400 mx-auto mb-2" />
-									<p className="font-semibold text-sm mb-1">{f.name}</p>
-									<p className="text-xs text-muted-foreground">{f.count.toLocaleString()} gene links</p>
-								</CardContent>
-							</Card>
-						</Link>
-					))}
-				</div>
+				{stats?.top_foods ? (
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
+						{stats.top_foods.slice(0, 5).map(f => (
+							<Link key={f.name} href={`/food/${encodeURIComponent(f.name)}`}>
+								<Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-green-100 hover:border-green-300">
+									<CardContent className="p-5 text-center">
+										<UtensilsCrossed className="h-6 w-6 text-green-400 mx-auto mb-2" />
+										<p className="font-semibold text-sm mb-1">{f.name}</p>
+										<p className="text-xs text-muted-foreground">{f.count.toLocaleString()} gene links</p>
+									</CardContent>
+								</Card>
+							</Link>
+						))}
+					</div>
+				) : (
+					<div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
+						{[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-28" />)}
+					</div>
+				)}
 			</section>
 
 			<Separator />
