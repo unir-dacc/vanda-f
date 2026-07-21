@@ -37,7 +37,9 @@ export default function Home() {
 						<span className="text-muted-foreground">·</span>
 						<Link href="/food/Vitamin D" className="text-green-600 hover:underline">Vitamin D</Link>
 						<span className="text-muted-foreground">·</span>
-						<Link href="/food/Caffeine" className="text-green-600 hover:underline">Caffeine</Link>
+						<Link href="/food/Coffee" className="text-green-600 hover:underline">Coffee</Link>
+						<span className="text-muted-foreground">·</span>
+						<Link href="/disease/Obesity" className="text-red-500 hover:underline">Obesity</Link>
 					</div>
 				</div>
 			</section>

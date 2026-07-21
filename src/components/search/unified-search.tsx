@@ -3,9 +3,9 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Dna, UtensilsCrossed, FlaskConical, Search, ArrowRight } from "lucide-react";
+import { Dna, UtensilsCrossed, FlaskConical, Search, ArrowRight, HeartPulse } from "lucide-react";
 
-function detectSearchType(query: string): "snp" | "gene" | "food" {
+function detectSearchType(query: string): "snp" | "gene" | "food" | "disease" {
 	const q = query.trim();
 	if (/^rs\d+$/i.test(q)) return "snp";
 	if (/^[A-Z][A-Z0-9]{1,9}$/.test(q)) return "gene";
@@ -27,6 +27,7 @@ export function UnifiedSearch({ size = "default", className = "", autoFocus = fa
 		const encoded = encodeURIComponent(value.trim());
 		if (type === "snp") router.push(`/snp/${encoded}`);
 		else if (type === "gene") router.push(`/gene/${encoded}`);
+		else if (type === "disease") router.push(`/disease/${encoded}`);
 		else router.push(`/food/${encoded}`);
 	}, [router]);
 
@@ -117,6 +118,13 @@ export function UnifiedSearch({ size = "default", className = "", autoFocus = fa
 								</CommandItem>
 							</CommandGroup>
 						)}
+
+						<CommandGroup heading="Disease">
+							<CommandItem value={`disease:${q}`} onSelect={handleSelect}>
+								<HeartPulse className="mr-2 h-4 w-4 text-red-400" />
+								<span className="text-muted-foreground">Search as disease: {q}</span>
+							</CommandItem>
+						</CommandGroup>
 					</>
 				)}
 			</CommandList>
