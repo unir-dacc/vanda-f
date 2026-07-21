@@ -14,6 +14,7 @@ import { EvidenceCard } from "@/components/evidence/evidence-card";
 import { ClinVarBadge } from "@/components/enrichment/clinvar-badge";
 import { PopulationFrequencyChart } from "@/components/enrichment/population-chart";
 import { FoodCompoundsList } from "@/components/enrichment/food-compounds";
+import { EmptyState } from "@/components/empty-state";
 import { ExternalLink, Dna, FlaskConical, Activity, UtensilsCrossed, BookOpen } from "lucide-react";
 import Link from "next/link";
 
@@ -147,11 +148,12 @@ export default function SNPPage() {
 								))}
 							</div>
 						) : (
-							<Card>
-								<CardContent className="py-8 text-center text-muted-foreground">
-									No predictions found for this SNP.
-								</CardContent>
-							</Card>
+							<EmptyState
+								icon={Activity}
+								title="No Predictions Yet"
+								description="This SNP hasn't been classified by our pipeline yet. It may be processed in a future update."
+								suggestion="Check back later or search on dbSNP for more information."
+							/>
 						)}
 					</TabsContent>
 
@@ -160,11 +162,11 @@ export default function SNPPage() {
 						{enrichment?.frequency ? (
 							<PopulationFrequencyChart data={enrichment.frequency} />
 						) : (
-							<Card>
-								<CardContent className="py-8 text-center text-muted-foreground">
-									Population frequency data not available for this SNP.
-								</CardContent>
-							</Card>
+							<EmptyState
+								icon={Dna}
+								title="Population Data Not Available"
+								description="Allele frequency data for this variant is not yet available in gnomAD."
+							/>
 						)}
 					</TabsContent>
 
@@ -177,11 +179,11 @@ export default function SNPPage() {
 								</CardContent>
 							</Card>
 						) : (
-							<Card>
-								<CardContent className="py-8 text-center text-muted-foreground">
-									No food associations found.
-								</CardContent>
-							</Card>
+							<EmptyState
+								icon={UtensilsCrossed}
+								title="No Food Associations"
+								description="No food-gene connections found for this variant in FooDB."
+							/>
 						)}
 					</TabsContent>
 
