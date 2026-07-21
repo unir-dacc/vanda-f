@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SourceBadge } from "@/components/evidence/source-badge";
 import { DirectionBadge } from "@/components/evidence/direction-badge";
-import { ExternalLink, ChevronUp, ChevronDown, Search, FlaskConical, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, ChevronUp, ChevronDown, Search, FlaskConical, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
 
@@ -134,6 +134,34 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 					<span className="text-xs text-muted-foreground">
 						{filtered.length} results
 					</span>
+
+					<button
+						onClick={() => {
+							const headers = ["Disease", "Effect", "Gene", "SNP", "Source", "PMID"];
+							const csvRows = [headers.join(",")];
+							for (const r of filtered) {
+								csvRows.push([
+									`"${r.disease}"`,
+									r.direction,
+									r.gene_info ?? "",
+									r.snp_id ?? r.snp ?? "",
+									r.source === "gwas-catalog" ? "GWAS" : "Literature",
+									r.pmid ?? "",
+								].join(","));
+							}
+							const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+							const url = URL.createObjectURL(blob);
+							const a = document.createElement("a");
+							a.href = url;
+							a.download = "vanda_associations.csv";
+							a.click();
+							URL.revokeObjectURL(url);
+						}}
+						className="flex items-center gap-1 px-2 py-1.5 text-xs border rounded-lg hover:bg-muted transition-colors"
+					>
+						<Download className="h-3 w-3" />
+						CSV
+					</button>
 				</div>
 
 				{/* Table */}
