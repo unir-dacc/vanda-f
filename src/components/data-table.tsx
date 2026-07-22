@@ -229,17 +229,21 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 											</TableCell>
 										)}
 										<TableCell><SourceBadge source={row.source ?? null} /></TableCell>
-										<TableCell>
+										<TableCell className="max-w-64">
 											{row.pmid ? (
 												<a
 													href={`https://pubmed.ncbi.nlm.nih.gov/${row.pmid}`}
 													target="_blank"
 													rel="noopener noreferrer"
-													className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
-													title={row.title ?? `PMID: ${row.pmid}`}
+													className="group text-xs text-blue-600 hover:underline flex items-start gap-1"
 												>
-													<ExternalLink className="h-3 w-3" />
-													PMID
+													<ExternalLink className="h-3 w-3 shrink-0 mt-0.5" />
+													<span className="line-clamp-2 leading-snug">
+														{row.title
+															? (row.title.length > 80 ? row.title.slice(0, 80) + "..." : row.title)
+															: `PMID: ${row.pmid}`
+														}
+													</span>
 												</a>
 											) : (
 												<span className="text-xs text-muted-foreground">—</span>
