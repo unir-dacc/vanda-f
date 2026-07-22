@@ -73,7 +73,7 @@ export const api = {
 			total_predictions: number;
 			counts: Record<string, number>;
 			predictions: Array<{
-				pred_id: number; snp: string; direction: string;
+				pred_id: number; snp: string; gene_info: string; direction: string;
 				confidence: number; source: string;
 				odds_ratio: number | null; p_value: number | null;
 				pmid: number | null; title: string | null;

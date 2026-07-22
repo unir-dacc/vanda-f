@@ -90,6 +90,7 @@ export default function DiseasePage() {
 	const rows: AssociationRow[] = data.predictions.map(p => ({
 		disease: diseaseName,
 		snp: p.snp,
+		gene_info: p.gene_info ?? "",
 		direction: p.direction,
 		confidence: p.confidence,
 		source: p.source,
