@@ -175,7 +175,7 @@ export default function DiseasePage() {
 
 					<TabsContent value="associations">
 						{rows.length > 0 ? (
-							<DataTable data={rows} showGene={false} />
+							<DataTable data={rows} />
 						) : (
 							<EmptyState icon={SearchX} title={t("empty.no_associations")} description={t("empty.check_back")} />
 						)}
