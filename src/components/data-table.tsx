@@ -211,11 +211,15 @@ export function DataTable({ data, showFood = false, showGene = true, showSnp = t
 										{showGene && (
 											<TableCell>
 												{row.gene_info && (
-													<Link href={`/gene/${row.gene_info}`}>
-														<Badge variant="outline" className="font-mono text-xs hover:bg-muted">
-															<FlaskConical className="h-3 w-3 mr-1" />{row.gene_info}
-														</Badge>
-													</Link>
+													<div className="flex flex-wrap gap-1">
+														{row.gene_info.split(/[,;]\s*/).filter(Boolean).map((gene) => (
+															<Link key={gene} href={`/gene/${gene.trim()}`}>
+																<Badge variant="outline" className="font-mono text-xs hover:bg-muted">
+																	<FlaskConical className="h-3 w-3 mr-1" />{gene.trim()}
+																</Badge>
+															</Link>
+														))}
+													</div>
 												)}
 											</TableCell>
 										)}
