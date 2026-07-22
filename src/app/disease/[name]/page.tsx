@@ -23,7 +23,7 @@ interface DiseaseData {
 	predictions: Array<{
 		pred_id: number; snp: string; direction: string; confidence: number;
 		source: string; odds_ratio: number | null; p_value: number | null;
-		pmid: number | null; title: string | null;
+		pmid: number | null; title: string | null; gene_info?: string;
 	}>;
 	genes: Array<{ gene: string; snp_count: number }>;
 	foods: Array<{ food: string; gene: string; amount: number; unit: string }>;
