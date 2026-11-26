@@ -97,7 +97,7 @@ export default function AboutPage() {
 								</div>
 								<h4 className="font-semibold text-sm mb-1">3. Classification</h4>
 								<p className="text-xs text-muted-foreground">
-									PubMedBERT fine-tuned on BioRED + TBGA (31K examples). F1: 0.85. Classifies protective, risk, or neutral.
+									PubMedBERT fine-tuned on BioRED + TBGA + GWAS Catalog (31.9K examples). Macro-F1: 0.76 on held-out test sentences. Classifies protective, risk, or neutral.
 								</p>
 							</CardContent>
 						</Card>
