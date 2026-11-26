@@ -93,7 +93,7 @@ export default function Home() {
 							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.predictions)}</p><p className="text-xs text-muted-foreground">{t("page.associations")}</p></div>
 							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.articles)}</p><p className="text-xs text-muted-foreground">{t("tab.articles")}</p></div>
 							<div><p className="text-xl font-bold text-green-700">{formatNumber(stats.foods)}</p><p className="text-xs text-muted-foreground">Food-Gene</p></div>
-							<div><p className="text-xl font-bold text-green-700">F1: 0.85</p><p className="text-xs text-muted-foreground">Model</p></div>
+							<div><p className="text-xl font-bold text-green-700">F1: 0.76</p><p className="text-xs text-muted-foreground">Macro-F1</p></div>
 						</div>
 					) : (
 						<div className="grid grid-cols-2 md:grid-cols-5 gap-4">
